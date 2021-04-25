@@ -2,7 +2,7 @@
  * @description       : Test Class to validate controller behavior
  * @author            : jefryruiz@gmail.com
  * @group             :
- * @last modified on  : 04-24-2021
+ * @last modified on  : 04-25-2021
  * @last modified by  : jefryruiz@gmail.com
  * Modifications Log
  * Ver   Date         Author                Modification
@@ -10,7 +10,6 @@
 **/
 @isTest
 public without sharing class AvailableProductsControllerTest {
-	private static Date EffectiveDate = Date.today().addMonths(1);
 	private static final String PRICEBOOK_ENTRY_NAME = 'Test Order Pricebook';
 	private static final String ORDER_NAME = 'ORDER N. 001';
 	@TestSetup
