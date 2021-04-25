@@ -87,7 +87,6 @@ public without sharing class AvailableProductsControllerTest {
 		Test.startTest();
 		List<AvailableProductsController.PBEntrySortable> response = AvailableProductsController.getAvailableProducts(testOrder.Id);
 		for(AvailableProductsController.PBEntrySortable pbEntrySortable : response){
-			System.debug(pbEntrySortable);
 			pbListToTable.add(pbEntrySortable.pbEntry);
 			if(pbEntrySortable.productQuantityInOrder > 0){
 				pbWithSomeQuantity.add(pbEntrySortable.pbEntry);
@@ -105,16 +104,48 @@ public without sharing class AvailableProductsControllerTest {
 		}
 	}
 	@IsTest
-	public static void addSelectProductToOrderItems(){
+	public static void IfNoPreviewsOrderItemsCreatedAddSelectProductToOrderItems(){
 		Order testOrder = returnOrder();
 		List<OrderItem> testOrderItems = [SELECT Id FROM OrderItem WHERE OrderId =: testOrder.Id];
 		System.assertEquals(0, testOrderItems.size(), 'The Order should not have Order Items');
 		List<PricebookEntry> pbEntries = getPbEntriesByPbName(PRICEBOOK_ENTRY_NAME);
+		AvailableProductsController.AuraResponse response;
 		Test.startTest();
-			// TODO: Controller
+		response = AvailableProductsController.addProductsToOrder(pbEntries, testOrder.Id);
 		Test.stopTest();
+		System.assertEquals('success', response.status, 'A success status is expected');
+		System.assertEquals('All Products have been added to the order', response.message, 'A success status is expected');
 		testOrderItems = [SELECT Id FROM OrderItem WHERE OrderId =: testOrder.Id];
 		System.assertEquals(5, testOrderItems.size(), 'A new Order Item should be added to the Order');
+	}
+	@isTest
+	public static void IfExistPreviewsOrderItemsCreatedUpdateOrderItems(){
+		Order testOrder = returnOrder();
+		List<OrderItem> testOrderItems = [SELECT Id FROM OrderItem WHERE OrderId =: testOrder.Id];
+		System.assertEquals(0, testOrderItems.size(), 'The Order should not have Order Items');
+		List<PricebookEntry> pbEntries = getPbEntriesByPbName(PRICEBOOK_ENTRY_NAME);
+		PricebookEntry refProduct = pbEntries[0];
+		OrderItem orderItem = testDataBuilder.aOrderItem()
+			.withOrder(testOrder)
+			.withQuantity(9)
+			.withPriceBook(refProduct)
+			.withUnitPrice(refProduct.UnitPrice)
+			.build();
+		insert orderItem;
+		AvailableProductsController.AuraResponse response;
+		Test.startTest();
+		response = AvailableProductsController.addProductsToOrder(pbEntries, testOrder.Id);
+		Test.stopTest();
+		System.assertEquals('success', response.status, 'A success status is expected');
+		System.assertEquals('All Products have been added to the order', response.message, 'A success status is expected');
+		testOrderItems = [SELECT Id, Quantity, PricebookEntryId FROM OrderItem WHERE OrderId =: testOrder.Id];
+		System.assertEquals(5, testOrderItems.size(), 'A new Order Item should be added to the Order');
+		for(OrderItem updatedOrderItem: testOrderItems){
+			if(updatedOrderItem.Id == orderItem.Id){
+				System.assertEquals(orderItem.PricebookEntryId , updatedOrderItem.PricebookEntryId, 'The product has to be the same');
+				System.assertEquals(10, updatedOrderItem.Quantity, 'The product quantity now is one more');
+			}
+		}
 	}
 	/**
 	* Test Utilities
