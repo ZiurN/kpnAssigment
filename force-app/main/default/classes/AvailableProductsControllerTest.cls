@@ -19,19 +19,9 @@ public without sharing class AvailableProductsControllerTest {
 			.withName('Test Account')
 			.build();
 		insert acc;
-		Pricebook2 testOrderPriceBook =testDataBuilder.aPricebook2()
-			.withName(PRICEBOOK_ENTRY_NAME)
-			.build();
-		insert testOrderPriceBook;
-		Order testOrder = testDataBuilder.aOrder()
-			.withAccount(acc)
-			.withName(ORDER_NAME)
-			.withPricebook2(testOrderPriceBook)
-			.build();
-		insert testOrder;
 		/** Build 100 Products */
 		List<Product2> testProducts = new List<Product2>();
-		for(Integer i = 0; i > 100; i++){
+		for(Integer i = 0; i < 100; i++){
 			Product2 testProduct = testDataBuilder.aProduct2()
 				.withActive(true)
 				.withName('Test Product ' + i)
@@ -39,22 +29,42 @@ public without sharing class AvailableProductsControllerTest {
 			testProducts.add(testProduct);
 		}
 		insert testProducts;
+		List<PricebookEntry> standardPriceBookList = new List<PricebookEntry>();
+		for (Product2 product : testProducts){
+			PricebookEntry priceBookEntry = testDataBuilder.aPricebookEntry()
+				.withProduct2(product)
+				.withActive(product.IsActive)
+				.build();
+				standardPriceBookList.add(priceBookEntry);
+		}
+		insert standardPriceBookList;
 		/** Add products to custom pricebook */
+		Pricebook2 testOrderPriceBook =testDataBuilder.aPricebook2()
+			.withName(PRICEBOOK_ENTRY_NAME)
+			.build();
+		insert testOrderPriceBook;
 		List<PricebookEntry> priceBookList = new List<PricebookEntry>();
 		for (Product2 product : testProducts){
 			PricebookEntry priceBookEntry = testDataBuilder.aPricebookEntry()
 				.withPricebook2(testOrderPriceBook)
 				.withProduct2(product)
 				.withActive(product.IsActive)
-				.withUnitPrice(Integer.valueOf(Math.random()*10))
+				.withUnitPrice(Integer.valueOf((Math.random()*10) + 1))
 				.build();
 			priceBookList.add(priceBookEntry);
 		}
 		insert priceBookList;
+		Order testOrder = testDataBuilder.aOrder()
+			.withAccount(acc)
+			.withName(ORDER_NAME)
+			.withPricebook2(testOrderPriceBook)
+			.build();
+		insert testOrder;
 	}
 	@isTest
 	public static void returnAvailableProductListOrderedByOrderItems(){
 		List<PricebookEntry> pbEntries = getPbEntriesByPbName(PRICEBOOK_ENTRY_NAME);
+		System.assertEquals(5, pbEntries.size(), 'Just five pbEntries are needed');
 		List<OrderItem> orderItems = new List<OrderItem>();
 		Map<Id, Integer> checkerMap = new Map<Id, Integer>();
 		Order testOrder = returnOrder();
@@ -72,12 +82,26 @@ public without sharing class AvailableProductsControllerTest {
 		}
 		insert orderItems;
 		List<PricebookEntry> pbListToTable = new List<PricebookEntry>();
+		List<PricebookEntry> pbWithSomeQuantity = new List<PricebookEntry>();
+		List<PricebookEntry> pbWithoutQuantity = new List<PricebookEntry>();
 		Test.startTest();
-			// TODO: Controller
+		List<AvailableProductsController.PBEntrySortable> response = AvailableProductsController.getAvailableProducts(testOrder.Id);
+		for(AvailableProductsController.PBEntrySortable pbEntrySortable : response){
+			System.debug(pbEntrySortable);
+			pbListToTable.add(pbEntrySortable.pbEntry);
+			if(pbEntrySortable.productQuantityInOrder > 0){
+				pbWithSomeQuantity.add(pbEntrySortable.pbEntry);
+			}else{
+				pbWithoutQuantity.add(pbEntrySortable.pbEntry);
+			}
+		}
 		Test.stopTest();
-		System.assertEquals(5, pbListToTable.size(), 'Five Products are expected');
-		for(Integer i = 0 ; i < pbListToTable.size(); i++){
-			System.assertEquals(5 - i, checkerMap.get(pbListToTable[i].Id), 'The list has to be ordered by Order Items quantity');
+		System.assertEquals(100, pbListToTable.size(), 'One hundred products are expected');
+		System.assertEquals(5, pbWithSomeQuantity.size(), 'Only five products are expected with quantity');
+		System.assertEquals(95, pbWithoutQuantity.size(), 'The rest of products are expected without quantity');
+		for(Integer i = 0 ; i < pbWithSomeQuantity.size(); i++){
+			System.assertEquals(5 - i, checkerMap.get(pbWithSomeQuantity[i].Id), 'The list has to be ordered by Order Items quantity');
+			System.assertEquals(pbListToTable[i], pbWithSomeQuantity[i], 'The order of the list has to be the same');
 		}
 	}
 	@IsTest
