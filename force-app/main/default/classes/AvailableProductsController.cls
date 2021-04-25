@@ -83,8 +83,8 @@ public with sharing class AvailableProductsController {
 		return [SELECT PricebookEntryId, Quantity FROM OrderItem WHERE OrderId =: OrderId WITH SECURITY_ENFORCED];
 	}
 	public class PBEntrySortable implements Comparable{
-		public PricebookEntry pbEntry;
-		public Integer productQuantityInOrder;
+		@AuraEnabled public PricebookEntry pbEntry;
+		@AuraEnabled public Integer productQuantityInOrder;
 		public PBEntrySortable(Integer productQuantityInOrder, PricebookEntry pbEntry){
 			this.pbEntry = pbEntry;
 			this.productQuantityInOrder = productQuantityInOrder;
@@ -105,7 +105,7 @@ public with sharing class AvailableProductsController {
 		}
 	}
 	public class AuraResponse {
-		public String status {get; set;}
-		public String message {get; set;}
+		@AuraEnabled public String status {get; set;}
+		@AuraEnabled public String message {get; set;}
 	}
 }

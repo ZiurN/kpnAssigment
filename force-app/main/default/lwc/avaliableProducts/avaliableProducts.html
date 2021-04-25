@@ -1,0 +1,35 @@
+<!--
+  @description       :
+  @author            : jefryruiz@gmail.com
+  @group             :
+  @last modified on  : 04-25-2021
+  @last modified by  : jefryruiz@gmail.com
+  Modifications Log
+  Ver   Date         Author                Modification
+  1.0   04-25-2021   jefryruiz@gmail.com   Initial Version
+-->
+<template>
+	<lightning-card icon-name="standard:products" title="Available Products">
+		<div slot="footer">
+			<lightning-button
+				variant="base"
+				label="Add Products to Order"
+				title="Looks like a link"
+				onclick={addProducts}
+				class="slds-m-left_x-small">
+			</lightning-button>
+		</div>
+		<template if:true={areDetailsVisible}>
+			<lightning-datatable
+				key-field="Id"
+				enable-infinite-loading="true"
+				columns={columns}
+				data={dataTable}
+				default-sort-direction={defaultSortDirection}
+				sorted-direction={sortDirection}
+				sorted-by={sortedBy}
+				onsort={sortTable}>
+			</lightning-datatable>
+		</template>
+	</lightning-card>
+</template>
