@@ -8,7 +8,7 @@
  * Ver   Date         Author                Modification
  * 1.0   04-26-2021   jefryruiz@gmail.com   Initial Version
 **/
-public class AuraResponse {
+public virtual class AuraResponse {
     @AuraEnabled public String status {get; set;}
 	@AuraEnabled public String message {get; set;}
 }

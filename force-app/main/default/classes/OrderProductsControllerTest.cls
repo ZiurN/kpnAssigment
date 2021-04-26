@@ -77,7 +77,7 @@ public without sharing class OrderProductsControllerTest {
 		Order testOrder = TestUtils.returnOrder(ORDER_NAME);
 		List<OrderItem> orderItems = new List<OrderItem>();
 		Test.startTest();
-			//TODO: Controller
+		orderItems = OrderProductsController.getOrderItems(testOrder.Id);
 		Test.stopTest();
 		System.assertEquals(5, orderItems.size(), 'Five products are expected');
 	}
@@ -85,9 +85,14 @@ public without sharing class OrderProductsControllerTest {
 	static void activateOrder(){
 		Order testOrder = TestUtils.returnOrder(ORDER_NAME);
 		System.assertEquals('Draft', testOrder.Status, 'The order should to be in status draft');
+		OrderProductsController.Response response;
 		Test.startTest();
-			//TODO: Controller
+		response = OrderProductsController.activateOrder(testOrder.Id);
 		Test.stopTest();
+		System.assertEquals('success', response.status, 'A success message is expected');
+		System.assertEquals('Order Activated successfully', response.message, 'A success message is expected');
+		System.assertEquals('Activated', response.orderStatus, 'The status should be activated');
+		testOrder = TestUtils.returnOrder(ORDER_NAME);
 		System.assertEquals('Activated', testOrder.Status, 'The order should to be in status Activated');
 	}
 }
