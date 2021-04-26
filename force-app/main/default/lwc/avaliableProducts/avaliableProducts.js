@@ -2,6 +2,7 @@ import { LightningElement, api, wire, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getAvailableProducts from '@salesforce/apex/AvailableProductsController.getAvailableProducts';
 import addProductsToOrder from '@salesforce/apex/AvailableProductsController.addProductsToOrder';
+import { getRecord } from 'lightning/uiRecordApi';
 const columns = [
 	{
 		label: 'Name',
@@ -23,7 +24,9 @@ const columns = [
 	}
 ];
 export default class AvailableProductsController extends LightningElement {
+	orderStatus = 'Draft';
 	areDetailsVisible = false;
+	hideCheckboxColums = false;
 	columns = columns;
 	dataTable = [];
 	initialOffset = 10
@@ -33,6 +36,15 @@ export default class AvailableProductsController extends LightningElement {
 	sortedBy;
 	selectedRows = [];
 	@api recordId;
+	@wire(getRecord, {recordId : '$recordId', fields: ['Order.Status']})
+	getRecordCallBack({error, data}){
+		if(data){
+			this.orderStatus = data.fields.Status.value
+			this.hideCheckboxColums = this.orderStatus === 'Activated';
+		}else if(error){
+			console.log(error);
+		}
+	}
 	@wire(getAvailableProducts, {OrderId : '$recordId'})
 	wiredProject({error, data}){
 		if (data) {
@@ -113,7 +125,6 @@ export default class AvailableProductsController extends LightningElement {
 			});
 			addProductsToOrder({pbList: pbList, OrderId: OrderId})
 				.then(result => {
-					console.log(result);
 					this.sendMessageToUser(result.status, result.message);
 				}).catch(error => {
 					console.log(error);

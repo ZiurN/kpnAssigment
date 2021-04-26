@@ -13,6 +13,7 @@
 		<div slot="actions">
 			<div slot="footer">
 				<lightning-button
+					disabled={hideCheckboxColums}
 					label="Add Products to Order"
 					icon-name="utility:add"
 					title="Add Products to Order"
@@ -29,6 +30,7 @@
 					load-more-offset={initialOffset}
 					onloadmore={loadMoreProducts}
 					show-row-number-column
+					hide-checkbox-column={hideCheckboxColums}
 					columns={columns}
 					data={initialData}
 					onrowselection={defineSelectedProducts}
