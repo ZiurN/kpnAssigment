@@ -2,7 +2,7 @@
  * @description       : Test Class to validate controller behavior
  * @author            : jefryruiz@gmail.com
  * @group             :
- * @last modified on  : 04-25-2021
+ * @last modified on  : 04-26-2021
  * @last modified by  : jefryruiz@gmail.com
  * Modifications Log
  * Ver   Date         Author                Modification
@@ -62,11 +62,11 @@ public without sharing class AvailableProductsControllerTest {
 	}
 	@isTest
 	public static void returnAvailableProductListOrderedByOrderItems(){
-		List<PricebookEntry> pbEntries = getPbEntriesByPbName(PRICEBOOK_ENTRY_NAME);
+		List<PricebookEntry> pbEntries = TestUtils.getPbEntriesByPbName(PRICEBOOK_ENTRY_NAME);
 		System.assertEquals(5, pbEntries.size(), 'Just five pbEntries are needed');
 		List<OrderItem> orderItems = new List<OrderItem>();
 		Map<Id, Integer> checkerMap = new Map<Id, Integer>();
-		Order testOrder = returnOrder();
+		Order testOrder = TestUtils.returnOrder(ORDER_NAME);
 		Integer count = 1;
 		for(PricebookEntry pbEntrie : pbEntries){
 			OrderItem orderItem= testDataBuilder.aOrderItem()
@@ -104,11 +104,11 @@ public without sharing class AvailableProductsControllerTest {
 	}
 	@IsTest
 	public static void IfNoPreviewsOrderItemsCreatedAddSelectProductToOrderItems(){
-		Order testOrder = returnOrder();
+		Order testOrder = TestUtils.returnOrder(ORDER_NAME);
 		List<OrderItem> testOrderItems = [SELECT Id FROM OrderItem WHERE OrderId =: testOrder.Id];
 		System.assertEquals(0, testOrderItems.size(), 'The Order should not have Order Items');
-		List<PricebookEntry> pbEntries = getPbEntriesByPbName(PRICEBOOK_ENTRY_NAME);
-		AvailableProductsController.AuraResponse response;
+		List<PricebookEntry> pbEntries = TestUtils.getPbEntriesByPbName(PRICEBOOK_ENTRY_NAME);
+		AuraResponse response;
 		Test.startTest();
 		response = AvailableProductsController.addProductsToOrder(pbEntries, testOrder.Id);
 		Test.stopTest();
@@ -119,10 +119,10 @@ public without sharing class AvailableProductsControllerTest {
 	}
 	@isTest
 	public static void IfExistPreviewsOrderItemsCreatedUpdateOrderItems(){
-		Order testOrder = returnOrder();
+		Order testOrder = TestUtils.returnOrder(ORDER_NAME);
 		List<OrderItem> testOrderItems = [SELECT Id FROM OrderItem WHERE OrderId =: testOrder.Id];
 		System.assertEquals(0, testOrderItems.size(), 'The Order should not have Order Items');
-		List<PricebookEntry> pbEntries = getPbEntriesByPbName(PRICEBOOK_ENTRY_NAME);
+		List<PricebookEntry> pbEntries = TestUtils.getPbEntriesByPbName(PRICEBOOK_ENTRY_NAME);
 		PricebookEntry refProduct = pbEntries[0];
 		OrderItem orderItem = testDataBuilder.aOrderItem()
 			.withOrder(testOrder)
@@ -131,7 +131,7 @@ public without sharing class AvailableProductsControllerTest {
 			.withUnitPrice(refProduct.UnitPrice)
 			.build();
 		insert orderItem;
-		AvailableProductsController.AuraResponse response;
+		AuraResponse response;
 		Test.startTest();
 		response = AvailableProductsController.addProductsToOrder(pbEntries, testOrder.Id);
 		Test.stopTest();
@@ -145,14 +145,5 @@ public without sharing class AvailableProductsControllerTest {
 				System.assertEquals(10, updatedOrderItem.Quantity, 'The product quantity now is one more');
 			}
 		}
-	}
-	/**
-	* Test Utilities
-	**/
-	private static List<PricebookEntry> getPbEntriesByPbName(String pbName){
-		return [SELECT Product2.Name, UnitPrice FROM PricebookEntry WHERE Pricebook2.Name =: pbName LIMIT 5];
-	}
-	private static Order returnOrder(){
-		return [SELECT id FROM Order WHERE Name =: ORDER_NAME LIMIT 1];
 	}
 }

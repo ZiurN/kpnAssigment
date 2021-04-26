@@ -2,7 +2,7 @@
  * @description       : Utility Class to build test Data.
  * @author            : jefryruiz@gmail.com
  * @group             :
- * @last modified on  : 04-24-2021
+ * @last modified on  : 04-26-2021
  * @last modified by  : jefryruiz@gmail.com
  * Modifications Log
  * Ver   Date         Author                               Modification
@@ -150,13 +150,6 @@ public class testDataBuilder{
 		}
 		public AccountBuilder withPhone(String value){
 			Acc.Phone = value;
-			return this;
-		}
-		public AccountBuilder withBillingAddress(String country, String State, String City, String Street){
-			Acc.BillingCountry = country;
-			Acc.BillingState = State;
-			Acc.BillingCity = City;
-			Acc.BillingStreet = Street;
 			return this;
 		}
 		public Account build(){
