@@ -16,7 +16,11 @@ const columns = [
 		hideDefaultActions : 'true',
 		sortable: true
 	},
-	{ label: 'List Price', fieldName: 'UnitPrice', sortable: true, type: 'currency', hideDefaultActions : 'true' }
+	{ label: 'List Price', fieldName: 'UnitPrice', sortable: true, type: 'currency', hideDefaultActions : 'true',
+		cellAttributes: {
+			alignment: 'left'
+		}
+	}
 ];
 export default class AvailableProductsController extends LightningElement {
 	areDetailsVisible = false;
@@ -53,7 +57,6 @@ export default class AvailableProductsController extends LightningElement {
 		}
 	}
 	sortBy(field, reverse) {
-		console.log(field);
 		return function(dataA, dataB) {
 			field = field == 'Link' ? 'Name' : field;
 			let detailA = dataA[field];
@@ -74,7 +77,6 @@ export default class AvailableProductsController extends LightningElement {
 		this.sortedBy = sortedBy;
 	}
 	loadMoreProducts(){
-		debugger;
 		let totalElements = this.dataTable.length;
 		let offSet = this.initialOffset;
 		let currentVisibleElements = this.initialData.length;
