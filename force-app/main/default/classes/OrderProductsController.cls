@@ -27,23 +27,64 @@ public with sharing class OrderProductsController {
 	public static Response activateOrder(Id OrderId){
 		Response frontResponse = new Response();
 		try {
-			Order order = [SELECT Status FROM Order WHERE Id =: OrderId WITH SECURITY_ENFORCED];
-			// TODO: Call to external System
-			order.Status = 'Activated';
-			Database.SaveResult result = Database.update(order);
-			if(result.isSuccess()){
-				frontResponse.status = 'success';
-				frontResponse.message = 'Order Activated successfully';
-				frontResponse.orderStatus = 'Activated';
-			}else {
+			Order order = [SELECT Status,
+								Account.AccountNumber,
+								OrderNumber,
+								Type
+							FROM Order
+							WHERE Id =: OrderId
+							WITH SECURITY_ENFORCED];
+			List<OrderItem> orderItems = [SELECT Product2.Name,
+											Quantity,
+											UnitPrice,
+											TotalPrice,
+											OrderItemNumber
+										FROM OrderItem
+										WHERE OrderId =: OrderId
+										WITH SECURITY_ENFORCED];
+			String msgBody = buildHttpReqBody(order, orderItems);
+			httpResponse response = CalloutUtils.call(msgBody, 'https://orderconfirmation.requestcatcher.com/', 'POST');
+			if(response.getStatusCode() >= 200 && response.getStatusCode() < 300){
+				order.Status = 'Activated';
+				Database.SaveResult result = Database.update(order);
+				if(result.isSuccess()){
+					frontResponse.status = 'success';
+					frontResponse.message = 'Order Activated successfully';
+					frontResponse.orderStatus = 'Activated';
+				}else {
+					frontResponse.status = 'error';
+					frontResponse.message = result.getErrors()[0].getMessage();
+				}
+			}else{
 				frontResponse.status = 'error';
-				frontResponse.message = result.getErrors()[0].getMessage();
+				frontResponse.message = 'Call to External System Failed';
+				frontResponse.orderStatus = 'Draft';
 			}
 		} catch (Exception e) {
 			frontResponse.status = 'error';
 			frontResponse.message = e.getMessage();
 		}
 		return frontResponse;
+	}
+
+	private static String buildHttpReqBody(Order order, List<OrderItem> orderItems){
+		ConfirmationRequest request = new ConfirmationRequest();
+		request.accountNumber = order.Account.AccountNumber;
+		request.orderNumber = order.OrderNumber;
+		request.status = order.Status;
+		request.type = order.Type;
+		request.orderProducts = new List<ConfirmationRequest.OrderProducts>();
+		if(OrderItems.size() > 0){
+			for(OrderItem orderItem: OrderItems){
+				ConfirmationRequest.OrderProducts orderProduct = new ConfirmationRequest.OrderProducts();
+				orderProduct.code = orderItem.OrderItemNumber;
+				orderProduct.name = orderItem.Product2.Name;
+				orderProduct.quantity = orderItem.Quantity;
+				orderProduct.unitPrice = orderItem.UnitPrice;
+				request.orderProducts.add(orderProduct);
+			}
+		}
+		return JSON.serialize(request);
 	}
 	public class Response extends AuraResponse {
 		@AuraEnabled public String orderStatus;
