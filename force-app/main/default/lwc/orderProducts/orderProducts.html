@@ -1,5 +1,6 @@
 <!--
-  @description       :
+  @description       : dataTable to show orderItems an update
+						the info inmediatly.
   @author            : jefryruiz@gmail.com
   @group             :
   @last modified on  : 04-26-2021
@@ -23,8 +24,8 @@
 				</lightning-button>
 			</div>
 		</div>
-		<template if:true={areDetailsVisible}>
-			<div class="table-container">
+		<div class="table-container">
+			<template if:true={areDetailsVisible}>
 				<lightning-datatable
 					key-field="Id"
 					enable-infinite-loading="true"
@@ -38,7 +39,10 @@
 					sorted-by={sortedBy}
 					onsort={sortTable}>
 				</lightning-datatable>
-			</div>
-		</template>
+			</template>
+			<template if:false={areDetailsVisible}>
+				<lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+			</template>
+		</div>
 	</lightning-card>
 </template>

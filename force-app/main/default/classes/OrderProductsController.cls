@@ -9,7 +9,7 @@
  * 1.0   04-26-2021   jefryruiz@gmail.com   Initial Version
 **/
 public with sharing class OrderProductsController {
-	@AuraEnabled(cacheable=true)
+	@AuraEnabled
 	public static List<OrderItem> getOrderItems(Id OrderId){
 		try {
 			return [SELECT Product2.Name,
