@@ -1,18 +1,34 @@
-# Salesforce DX Project: Next Steps
+# KPN Assigment
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+This is the repository of the development built by *Jeferson Ruiz*.
+## Pre steps:
 
-## How Do You Plan to Deploy Your Changes?
+1. Because Salesforce at the present does not allow add Custom Labels to packages, if you decide to use the package link, we recommend deploy the custom labels metadata in this repository to your Org.
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+2. The test endpoint generated in **requestcatcher** is:
 
-## Configure Your Salesforce DX Project
+        https://orderconfirmation.requestcatcher.com/
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+    Add this url to the authorized sites in the **Remote Site Settings** in your org.
 
-## Read All About It
+## Deploy the functionality:
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+#### 1. Via package link:
+
+https://login.salesforce.com/packaging/installPackage.apexp?p0=04t1U000007kMq3
+
+
+#### 2. From this repository:
+
+The full functionality code is located in the branch named <code>feature-KPN-orderLWC</code>. The <code>main</code> remains as a new SFDX project. This is useful to deploy via git differences and [SF power kit](https://github.com/Accenture/sfpowerkit), if you don't prefer the package link; just install the SF power kit, clone this SFDX project, connect it to your Org, and execute this commands:
+
+        $ sfdx sfpowerkit:project:diff -d ./delta --revisionfrom=main --revisionto=feature-KPN-orderLWC
+        $ sfdx force:source:deploy -p ./delta/force-app/main/default/ --verbose
+
+Or even easier, just deploy the full <code>force-app</code> from the <code>feature-KPN-orderLWC</code> branch (jeje).
+
+## Preview
+
+Here a video link to a brief preview of the final functionality.
+
+(PENDING)
