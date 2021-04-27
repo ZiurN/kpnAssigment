@@ -1,11 +1,13 @@
 import { LightningElement, api, wire, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import KPN_ORDERS_SELECT_ONE_PRODUCT from '@salesforce/label/c.KPN_ORDERS_SELECT_ONE_PRODUCT';
 import getAvailableProducts from '@salesforce/apex/AvailableProductsController.getAvailableProducts';
 import addProductsToOrder from '@salesforce/apex/AvailableProductsController.addProductsToOrder';
 import { getRecord } from 'lightning/uiRecordApi';
 /** To send the event accross de page */
 import { publish, MessageContext } from 'lightning/messageService';
 import orderItemsAddedEvent from '@salesforce/messageChannel/orderItemsAddedEvent__c';
+
 const columns = [
 	{
 		label: 'Name',
@@ -27,6 +29,10 @@ const columns = [
 	}
 ];
 export default class AvailableProductsController extends LightningElement {
+	/** Custom Labels */
+		labels = {
+			KPN_ORDERS_SELECT_ONE_PRODUCT
+		}
 	/** View controller attributes */
 		orderStatus = 'Draft';
 		areDetailsVisible = false;
@@ -127,7 +133,7 @@ export default class AvailableProductsController extends LightningElement {
 			let selectedProducts = this.selectedRows;
 			let pbList = [];
 			if(selectedProducts.length == 0){
-				this.sendMessageToUser('warning', 'Select at least one product to add');
+				this.sendMessageToUser('warning', this.labels.KPN_ORDERS_SELECT_ONE_PRODUCT);
 			}else{
 				selectedProducts.forEach(selectedProduct => {
 					let pbEntryToAdd = { 'sobjectType': 'PricebookEntry' };

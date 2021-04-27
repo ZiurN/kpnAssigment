@@ -2,7 +2,7 @@
  * @description       : Test Class to validate controller behavior
  * @author            : jefryruiz@gmail.com
  * @group             :
- * @last modified on  : 04-26-2021
+ * @last modified on  : 04-27-2021
  * @last modified by  : jefryruiz@gmail.com
  * Modifications Log
  * Ver   Date         Author                Modification
@@ -113,7 +113,7 @@ public without sharing class AvailableProductsControllerTest {
 		response = AvailableProductsController.addProductsToOrder(pbEntries, testOrder.Id);
 		Test.stopTest();
 		System.assertEquals('success', response.status, 'A success status is expected');
-		System.assertEquals('All Products have been added to the order', response.message, 'A success status is expected');
+		System.assertEquals(System.Label.KPN_ORDERS_PRODUCTS_ADDED_OK, response.message, 'A success status is expected');
 		testOrderItems = [SELECT Id FROM OrderItem WHERE OrderId =: testOrder.Id];
 		System.assertEquals(5, testOrderItems.size(), 'A new Order Item should be added to the Order');
 	}
@@ -136,7 +136,7 @@ public without sharing class AvailableProductsControllerTest {
 		response = AvailableProductsController.addProductsToOrder(pbEntries, testOrder.Id);
 		Test.stopTest();
 		System.assertEquals('success', response.status, 'A success status is expected');
-		System.assertEquals('All Products have been added to the order', response.message, 'A success status is expected');
+		System.assertEquals(System.Label.KPN_ORDERS_PRODUCTS_ADDED_OK, response.message, 'A success status is expected');
 		testOrderItems = [SELECT Id, Quantity, PricebookEntryId FROM OrderItem WHERE OrderId =: testOrder.Id];
 		System.assertEquals(5, testOrderItems.size(), 'A new Order Item should be added to the Order');
 		for(OrderItem updatedOrderItem: testOrderItems){

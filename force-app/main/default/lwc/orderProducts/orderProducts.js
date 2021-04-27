@@ -1,12 +1,12 @@
 import { LightningElement, wire, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import KPN_ORDERS_ACTIVATION_ERROR from '@salesforce/label/c.KPN_ORDERS_ACTIVATION_ERROR';
 import getOrderItems from '@salesforce/apex/OrderProductsController.getOrderItems';
 import activateOrder from '@salesforce/apex/OrderProductsController.activateOrder';
 /** To listen the event orderItemsAddedEvent from the availableProducts component */
 import { getRecord, getRecordNotifyChange } from 'lightning/uiRecordApi';
 import {
     subscribe,
-    unsubscribe,
     APPLICATION_SCOPE,
     MessageContext
 } from 'lightning/messageService';
@@ -30,6 +30,10 @@ const columns = [
 	{ label: 'Total Price', fieldName: 'TotalPrice', sortable: true, type: 'currency', hideDefaultActions : 'true' }
 ];
 export default class OrderProducts extends LightningElement {
+	/** Custom Labels */
+		labels = {
+			KPN_ORDERS_ACTIVATION_ERROR
+		}
 	/** View controller attributes */
 		orderStatus = 'Draft';
 		activatingOrder = false;
@@ -108,7 +112,7 @@ export default class OrderProducts extends LightningElement {
 						}
 					}).catch(error => {
 						console.log(error);
-						this.sendMessageToUser('error', 'Error activating the Order');
+						this.sendMessageToUser('error', this.labels.KPN_ORDERS_ACTIVATION_ERROR);
 						this.activatingOrder = false;
 					});
 		}

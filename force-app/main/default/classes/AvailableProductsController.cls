@@ -2,7 +2,7 @@
  * @description       : Controller class of the LWC AvailableProducts
  * @author            : jefryruiz@gmail.com
  * @group             :
- * @last modified on  : 04-26-2021
+ * @last modified on  : 04-27-2021
  * @last modified by  : jefryruiz@gmail.com
  * Modifications Log
  * Ver   Date         Author                Modification
@@ -71,7 +71,7 @@ public with sharing class AvailableProductsController {
 				Database.upsert(orderItemsToUpsert);
 			}
 			response.status = 'success';
-			response.message = 'All Products have been added to the order';
+			response.message = System.Label.KPN_ORDERS_PRODUCTS_ADDED_OK;
 		} catch (Exception e) {
 			response.status = 'error';
 			response.message = 'An error has occurred : ' + e.getMessage();

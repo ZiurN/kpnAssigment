@@ -2,7 +2,7 @@
  * @description       : Test class to validate OrderProducts Controller Class
  * @author            : jefryruiz@gmail.com
  * @group             :
- * @last modified on  : 04-26-2021
+ * @last modified on  : 04-27-2021
  * @last modified by  : jefryruiz@gmail.com
  * Modifications Log
  * Ver   Date         Author                Modification
@@ -91,7 +91,7 @@ public without sharing class OrderProductsControllerTest {
 		response = OrderProductsController.activateOrder(testOrder.Id);
 		Test.stopTest();
 		System.assertEquals('success', response.status, 'A success message is expected');
-		System.assertEquals('Order Activated successfully', response.message, 'A success message is expected');
+		System.assertEquals(System.Label.KPN_ORDERS_ACTIVATION_OK, response.message, 'A success message is expected');
 		System.assertEquals('Activated', response.orderStatus, 'The status should be activated');
 		testOrder = TestUtils.returnOrder(ORDER_NAME);
 		System.assertEquals('Activated', testOrder.Status, 'The order should to be in status Activated');
@@ -106,7 +106,7 @@ public without sharing class OrderProductsControllerTest {
 		response = OrderProductsController.activateOrder(testOrder.Id);
 		Test.stopTest();
 		System.assertEquals('error', response.status, 'A error message is expected');
-		System.assertEquals('Call to External System Failed', response.message, 'A error message is expected');
+		System.assertEquals(System.Label.KPN_ORDERS_CALLOUT_FAILS, response.message, 'A error message is expected');
 		System.assertEquals('Draft', response.orderStatus, 'The status should be Draft');
 		testOrder = TestUtils.returnOrder(ORDER_NAME);
 		System.assertEquals('Draft', testOrder.Status, 'The order should to be in status Draft');

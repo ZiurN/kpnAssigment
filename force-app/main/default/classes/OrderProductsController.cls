@@ -2,7 +2,7 @@
  * @description       : Controller Class of the LWC OrderProducts
  * @author            : jefryruiz@gmail.com
  * @group             :
- * @last modified on  : 04-26-2021
+ * @last modified on  : 04-27-2021
  * @last modified by  : jefryruiz@gmail.com
  * Modifications Log
  * Ver   Date         Author                Modification
@@ -49,7 +49,7 @@ public with sharing class OrderProductsController {
 				Database.SaveResult result = Database.update(order);
 				if(result.isSuccess()){
 					frontResponse.status = 'success';
-					frontResponse.message = 'Order Activated successfully';
+					frontResponse.message = System.Label.KPN_ORDERS_ACTIVATION_OK;
 					frontResponse.orderStatus = 'Activated';
 				}else {
 					frontResponse.status = 'error';
@@ -57,7 +57,7 @@ public with sharing class OrderProductsController {
 				}
 			}else{
 				frontResponse.status = 'error';
-				frontResponse.message = 'Call to External System Failed';
+				frontResponse.message = System.Label.KPN_ORDERS_CALLOUT_FAILS;
 				frontResponse.orderStatus = 'Draft';
 			}
 		} catch (Exception e) {
