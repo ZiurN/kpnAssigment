@@ -82,9 +82,10 @@ public without sharing class OrderProductsControllerTest {
 		System.assertEquals(5, orderItems.size(), 'Five products are expected');
 	}
 	@IsTest
-	static void activateOrder(){
+	static void activateOrderIfCallToExtSystemReturns200(){
 		Order testOrder = TestUtils.returnOrder(ORDER_NAME);
 		System.assertEquals('Draft', testOrder.Status, 'The order should to be in status draft');
+		Test.setMock(HttpCalloutMock.class, new OrderProductsControllerMock(200));
 		OrderProductsController.Response response;
 		Test.startTest();
 		response = OrderProductsController.activateOrder(testOrder.Id);
@@ -94,5 +95,20 @@ public without sharing class OrderProductsControllerTest {
 		System.assertEquals('Activated', response.orderStatus, 'The status should be activated');
 		testOrder = TestUtils.returnOrder(ORDER_NAME);
 		System.assertEquals('Activated', testOrder.Status, 'The order should to be in status Activated');
+	}
+	@IsTest
+	static void IfCallToExtSystemDontReturns200SendMessage(){
+		Order testOrder = TestUtils.returnOrder(ORDER_NAME);
+		System.assertEquals('Draft', testOrder.Status, 'The order should to be in status draft');
+		Test.setMock(HttpCalloutMock.class, new OrderProductsControllerMock(400));
+		OrderProductsController.Response response;
+		Test.startTest();
+		response = OrderProductsController.activateOrder(testOrder.Id);
+		Test.stopTest();
+		System.assertEquals('error', response.status, 'A error message is expected');
+		System.assertEquals('Call to External System Failed', response.message, 'A error message is expected');
+		System.assertEquals('Draft', response.orderStatus, 'The status should be Draft');
+		testOrder = TestUtils.returnOrder(ORDER_NAME);
+		System.assertEquals('Draft', testOrder.Status, 'The order should to be in status Draft');
 	}
 }
