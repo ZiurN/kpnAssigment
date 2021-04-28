@@ -50,8 +50,12 @@ Once you have installed the plugin, clone this repo locally and run the followin
 ## Preview
 
 ### Sortable Columns!
-![image](https://i.imgur.com/bMD6c5Q.gif)
+
+![image](https://i.imgur.com/IMOdo6X.gif)
 ### Automatic Order Products Quantity Update!
+
 ![image](https://i.imgur.com/HcUrHfs.gif)
+
 ### Activated Orders And Disabling Add New Products!
+
 ![image](https://i.imgur.com/VFTroRz.gif)
